@@ -14,7 +14,9 @@ object result {
     }
     println(x)
     println(List.tail(List(1, 2, 3, 4, 5)))
-    println(List.setHead(0,List(1,2,3,4,5)))
+    println(List.setHead(0, List(1, 2, 3, 4, 5)))
+    println(List.drop(List(1, 2, 3, 4, 5), 2))
+    println(List.dropWhile(List(1, 2, 3, 4, 5), (a: Int) => a < 4))
   }
 }
 
@@ -42,7 +44,17 @@ object List {
 
   def setHead[A](h: A, l: List[A]): List[A] = l match {
     case Nil => sys.error("setHead of empty list")
-    case Cons(_,t) => Cons(h,t)
+    case Cons(_, t) => Cons(h, t)
+  }
+
+  def drop[A](l: List[A], n: Int): List[A] = if (n <= 0) l else l match {
+    case Nil => Nil
+    case Cons(_, t) => drop(t, n - 1)
+  }
+
+  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
+    case Cons(h, t) if f(h) => dropWhile(t, f)
+    case _ => l
   }
 
   def apply[A](as: A*): List[A] =
