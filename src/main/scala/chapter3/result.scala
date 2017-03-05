@@ -27,6 +27,7 @@ object result {
     println(List.sum3(List(1, 2, 3)))
     println(List.product3(List(1, 2, 3)))
     println(List.length2(List(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)))
+    println(List.reverse(List(1, 2, 3, 4)))
   }
 }
 
@@ -100,6 +101,8 @@ object List {
   def product3(l: List[Double]): Double = foldLeft(l, 1.0)(_ * _)
 
   def length2[A](l: List[A]): Int = foldLeft(l, 0)((b, _) => b + 1)
+
+  def reverse[A](l: List[A]): List[A] = foldLeft(l, List[A]())((h, t) => Cons(t, h))
 
   def apply[A](as: A*): List[A] =
     if (as.isEmpty) Nil
