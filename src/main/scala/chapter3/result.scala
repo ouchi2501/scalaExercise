@@ -30,6 +30,7 @@ object result {
     println(List.reverse(List(1, 2, 3, 4)))
     println(List.foldRightViaFoldLeft(List(1, 2, 3), 0)(_ + _))
     println(List.foldLeftViaFoldRight(List(1, 2, 3), 0)(_ + _))
+    println(List.appendViaFoldRight(List(1, 2, 3), List(4, 5, 6)))
   }
 }
 
@@ -109,6 +110,8 @@ object List {
   def foldRightViaFoldLeft[A, B](as: List[A], z: B)(f: (A, B) => B): B = foldLeft(reverse(as), z)((b, a) => f(a, b))
 
   def foldLeftViaFoldRight[A, B](as: List[A], z: B)(f: (B, A) => B): B = foldRight(as, (b: B) => b)((a, g) => b => g(f(b, a)))(z)
+
+  def appendViaFoldRight[A](l1: List[A], l2: List[A]): List[A] = foldRight(l1, l2)(Cons(_, _))
 
   def apply[A](as: A*): List[A] =
     if (as.isEmpty) Nil
