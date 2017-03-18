@@ -40,6 +40,9 @@ object result {
     println(List.filterViaFlatMap(List(1, 2, 3, 4))(a => a % 2 == 0))
     println(List.addZip(List(1, 2, 3), List(4, 5, 6)))
     println(List.zipWith(List(1, 2, 3), List(4, 5, 6))((a, b) => a - b))
+    println(List.hasSubSequence(List(1, 2, 3), List(1, 2)))
+    println(List.hasSubSequence(List(1, 2, 3), List(5)))
+    println(List.hasSubSequence(List(1, 2, 3), List(3)))
   }
 }
 
@@ -148,6 +151,20 @@ object List {
     case (Nil, _) => Nil
     case (_, Nil) => Nil
     case (Cons(h1, t1), Cons(h2, t2)) => Cons(f(h1, h2), zipWith(t1, t2)(f))
+  }
+
+  @annotation.tailrec
+  def hasSubSequence[A](sup: List[A], sub: List[A]): Boolean = sup match {
+    case Nil => sub == Nil
+    case _ if startsWith(sup, sub) => true
+    case Cons(_, t) => hasSubSequence(t, sub)
+  }
+
+  @annotation.tailrec
+  def startsWith[A](l: List[A], prefix: List[A]): Boolean = (l, prefix) match {
+    case (_, Nil) => true
+    case (Cons(h, t), Cons(h2, t2)) if h == h2 => startsWith(t, t2)
+    case _ => false
   }
 
   def apply[A](as: A*): List[A] =
