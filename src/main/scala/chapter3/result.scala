@@ -32,6 +32,14 @@ object result {
     println(List.foldLeftViaFoldRight(List(1, 2, 3), 0)(_ + _))
     println(List.appendViaFoldRight(List(1, 2, 3), List(4, 5, 6)))
     println(List.concat(List(List(1, 2, 3), List(4, 5, 6), List(7, 8, 9))))
+    println(List.add1(List(1, 2, 3)))
+    println(List.doubleToString(List(1.0, 2.0, 3.0)))
+    println(List.map(List(1, 2, 3))((a) => a + 1))
+    println(List.filter(List(1, 2, 3, 4))(a => a % 2 == 0))
+    println(List.flatMap(List(1, 2, 3))(i => List(i, i)))
+    println(List.filterViaFlatMap(List(1, 2, 3, 4))(a => a % 2 == 0))
+    println(List.addZip(List(1, 2, 3), List(4, 5, 6)))
+    println(List.zipWith(List(1, 2, 3), List(4, 5, 6))((a, b) => a - b))
   }
 }
 
@@ -110,11 +118,37 @@ object List {
 
   def foldRightViaFoldLeft[A, B](as: List[A], z: B)(f: (A, B) => B): B = foldLeft(reverse(as), z)((b, a) => f(a, b))
 
-  def foldLeftViaFoldRight[A, B](as: List[A], z: B)(f: (B, A) => B): B = foldRight(as, (b: B) => b)((a, g) => b => g(f(b, a)))(z)
+  def foldLeftViaFoldRight[A, B](as: List[A], z: B)(f: (B, A) => B): B =
+    foldRight(as, (b: B) => b)((a, g) => b => g(f(b, a)))(z)
 
   def appendViaFoldRight[A](l1: List[A], l2: List[A]): List[A] = foldRight(l1, l2)(Cons(_, _))
 
   def concat[A](l: List[List[A]]): List[A] = foldRightViaFoldLeft(l, Nil: List[A])(append)
+
+  def add1(l: List[Int]): List[Int] = foldRight(l, Nil: List[Int])((h, t) => Cons(h + 1, t))
+
+  def doubleToString(l: List[Double]): List[String] = foldRight(l, Nil: List[String])((h, t) => Cons(h.toString, t))
+
+  def map[A, B](as: List[A])(f: A => B): List[B] = foldRight(as, Nil: List[B])((h, t) => Cons(f(h), t))
+
+  def filter[A](as: List[A])(f: A => Boolean): List[A] =
+    foldRight(as, Nil: List[A])((h, t) => if (f(h)) Cons(h, t) else t)
+
+  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = concat(map(as)(f))
+
+  def filterViaFlatMap[A](as: List[A])(f: A => Boolean): List[A] = flatMap(as)(a => if (f(a)) List(a) else Nil)
+
+  def addZip(a: List[Int], b: List[Int]): List[Int] = (a, b) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(h1, t1), Cons(h2, t2)) => Cons(h1 + h2, addZip(t1, t2))
+  }
+
+  def zipWith[A, B, C](a: List[A], b: List[B])(f: (A, B) => C): List[C] = (a, b) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(h1, t1), Cons(h2, t2)) => Cons(f(h1, h2), zipWith(t1, t2)(f))
+  }
 
   def apply[A](as: A*): List[A] =
     if (as.isEmpty) Nil
