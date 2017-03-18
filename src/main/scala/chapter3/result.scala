@@ -28,6 +28,8 @@ object result {
     println(List.product3(List(1, 2, 3)))
     println(List.length2(List(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)))
     println(List.reverse(List(1, 2, 3, 4)))
+    println(List.foldRightViaFoldLeft(List(1, 2, 3), 0)(_ + _))
+    println(List.foldLeftViaFoldRight(List(1, 2, 3), 0)(_ + _))
   }
 }
 
@@ -103,6 +105,10 @@ object List {
   def length2[A](l: List[A]): Int = foldLeft(l, 0)((b, _) => b + 1)
 
   def reverse[A](l: List[A]): List[A] = foldLeft(l, List[A]())((h, t) => Cons(t, h))
+
+  def foldRightViaFoldLeft[A, B](as: List[A], z: B)(f: (A, B) => B): B = foldLeft(reverse(as), z)((b, a) => f(a, b))
+
+  def foldLeftViaFoldRight[A, B](as: List[A], z: B)(f: (B, A) => B): B = foldRight(as, (b: B) => b)((a, g) => b => g(f(b, a)))(z)
 
   def apply[A](as: A*): List[A] =
     if (as.isEmpty) Nil
