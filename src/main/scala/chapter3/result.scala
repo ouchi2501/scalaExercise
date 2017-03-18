@@ -31,6 +31,7 @@ object result {
     println(List.foldRightViaFoldLeft(List(1, 2, 3), 0)(_ + _))
     println(List.foldLeftViaFoldRight(List(1, 2, 3), 0)(_ + _))
     println(List.appendViaFoldRight(List(1, 2, 3), List(4, 5, 6)))
+    println(List.concat(List(List(1, 2, 3), List(4, 5, 6), List(7, 8, 9))))
   }
 }
 
@@ -112,6 +113,8 @@ object List {
   def foldLeftViaFoldRight[A, B](as: List[A], z: B)(f: (B, A) => B): B = foldRight(as, (b: B) => b)((a, g) => b => g(f(b, a)))(z)
 
   def appendViaFoldRight[A](l1: List[A], l2: List[A]): List[A] = foldRight(l1, l2)(Cons(_, _))
+
+  def concat[A](l: List[List[A]]): List[A] = foldRightViaFoldLeft(l, Nil: List[A])(append)
 
   def apply[A](as: A*): List[A] =
     if (as.isEmpty) Nil
